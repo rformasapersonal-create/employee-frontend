@@ -1,47 +1,23 @@
-import Login from "./components/Login";
-import axios from "axios";
+import { Routes, Route } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      await axios.post(
-        "http://127.0.0.1:8000/api/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-
-      window.location.reload();
-    } catch (error) {
-      console.error(error.response?.data || error.message);
-    }
-  };
-
   return (
-    <div>
-      {user ? (
-        <>
-          <h2>Welcome, {user.name}!</h2>
-          <p>{user.email}</p>
+    <Routes>
+      <Route path="/" element={<Login />} />
 
-          <button onClick={handleLogout}>
-            Logout
-          </button>
-        </>
-      ) : (
-        <Login />
-      )}
-    </div>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 
