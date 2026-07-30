@@ -1,9 +1,13 @@
 import { useState } from "react";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
     const handleLogin = async () => {
     try {
@@ -17,17 +21,15 @@ function Login() {
 
         console.log(response.data);
 
-        // Save the token
-        localStorage.setItem("token", response.data.token);
-
-        // Save the logged-in user
-        localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
+        login(
+          response.data.user,
+          response.data.token
         );
 
+        navigate("/dashboard");
+
     } catch (error) {
-        console.error(error.response.data);
+        console.error(error.response?.data);
     }
     };
 
